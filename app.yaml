@@ -1,0 +1,26 @@
+runtime: go116  # or another supported version
+
+instance_class: F1 # Smallest auto scaling
+
+env_variables:
+  # BUCKET_NAME: "example-gcs-bucket"
+  GIN_MODE: "release" # lets Gin know this is a prod environment
+
+handlers:
+- url: /stylesheets
+  static_dir: stylesheets
+
+- url: /(.*\.(gif|png|jpg))$
+  static_files: static/\1
+  upload: static/.*\.(gif|png|jpg)$
+
+- url: /api/.*
+  script: auto
+
+- url: /(.+)
+  static_files: static/\1
+  upload: static/(.+)
+
+- url: /
+  static_files: static/index.html
+  upload: static/index.html
