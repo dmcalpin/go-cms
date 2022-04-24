@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/dmcalpin/go-cms/ping"
-	"github.com/dmcalpin/go-cms/users"
+	"github.com/dmcalpin/go-cms/services/ping"
+	"github.com/dmcalpin/go-cms/services/users"
 )
 
 var router *gin.Engine
@@ -17,7 +17,7 @@ func init() {
 	// gin.DisableConsoleColor()
 	r := gin.Default()
 
-	tmpl, err := template.ParseFiles("ping/ping.gohtml")
+	tmpl, err := template.ParseFiles("services/ping/ping.gohtml")
 	if err != nil {
 		log.Fatal(err)
 	}

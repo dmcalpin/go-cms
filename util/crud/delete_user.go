@@ -7,17 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func deleteUser(c *gin.Context) {
-	userKey, err := getKeyParam(&c.Params)
+func (crud *CRUD[T, T2, T3]) Delete(c *gin.Context) {
+	key, err := crud.decodeKeyParam(&c.Params)
 	if err != nil {
-		logAndWriteError(c, err)
+		crud.logAndWriteError(c, err)
 		return
 	}
 
 	client := db.GetClient()
-	err = client.Delete(c, userKey)
+	err = client.Delete(c, key)
 	if err != nil {
-		logAndWriteError(c, err)
+		crud.logAndWriteError(c, err)
 		return
 	}
 
