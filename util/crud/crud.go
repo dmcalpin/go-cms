@@ -1,4 +1,4 @@
-package users
+package crud
 
 import (
 	"errors"
@@ -37,13 +37,14 @@ func (crud *CRUD[T, T2, T3]) decodeKeyParam(params *gin.Params) (*datastore.Key,
 }
 
 func (crud *CRUD[T, T2, T3]) errToHTTPError(err error) int {
-	if errors.Is(err, datastore.ErrNoSuchEntity) {
+	switch {
+	case errors.Is(err, datastore.ErrNoSuchEntity):
 		return http.StatusNotFound
-	} else if errors.Is(err, datastore.ErrInvalidEntityType) {
+	case errors.Is(err, datastore.ErrInvalidEntityType):
 		return http.StatusNotAcceptable
-	} else if errors.Is(err, datastore.ErrInvalidKey) {
+	case errors.Is(err, datastore.ErrInvalidKey):
 		return http.StatusNotAcceptable
-	} else if errors.Is(err, ErrInvalidInput) {
+	case errors.Is(err, ErrInvalidInput):
 		return http.StatusNotAcceptable
 	}
 

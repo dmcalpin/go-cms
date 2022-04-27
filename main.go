@@ -1,12 +1,24 @@
 package main
 
 import (
-	"github.com/dmcalpin/go-cms/router"
 	"github.com/gin-gonic/gin"
+
+	"github.com/dmcalpin/go-cms/services/jobs"
+	"github.com/dmcalpin/go-cms/services/ping"
+	"github.com/dmcalpin/go-cms/services/users"
 )
 
 func main() {
-	r := router.GetRouter()
+	// Disable Console Color
+	// gin.DisableConsoleColor()
+	r := gin.Default()
+
+	ping.SetTemplates(r)
+
+	rg := r.Group("/api")
+	ping.AddRouter(rg)
+	users.AddRouter(rg)
+	jobs.AddRouter(rg)
 
 	r.Use(gin.Recovery())
 	r.Use(gin.Logger())
