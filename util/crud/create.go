@@ -16,7 +16,7 @@ func (crud *CRUD[T, T2, T3]) Create(c *gin.Context) {
 	err := c.Bind(input)
 	if err != nil {
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, nil)
+		c.JSON(crud.errToHTTPError(err), nil)
 		return
 	}
 

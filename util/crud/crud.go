@@ -2,6 +2,7 @@ package crud
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"cloud.google.com/go/datastore"
@@ -45,8 +46,12 @@ func (crud *CRUD[T, T2, T3]) errToHTTPError(err error) int {
 	case errors.Is(err, datastore.ErrInvalidKey):
 		return http.StatusNotAcceptable
 	case errors.Is(err, ErrInvalidInput):
-		return http.StatusNotAcceptable
+		return http.StatusBadRequest
 	}
 
 	return http.StatusInternalServerError
+}
+
+func (crud *CRUD[T, T2, T3]) BeforeCreate() {
+	fmt.Println("default before create")
 }

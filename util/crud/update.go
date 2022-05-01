@@ -1,7 +1,6 @@
 package crud
 
 import (
-	"fmt"
 	"net/http"
 	"reflect"
 
@@ -35,7 +34,6 @@ func (crud *CRUD[T, T2, T3]) Update(c *gin.Context) {
 	entity = crud.patchValues(entity, input)
 
 	client := db.GetClient()
-	fmt.Println("ENTITY:", entity)
 	updatedKey, err := client.Put(c, key, entity)
 	if err != nil {
 		crud.logAndWriteError(c, err)
