@@ -8,7 +8,7 @@ import (
 	"cloud.google.com/go/datastore"
 )
 
-var client *datastore.Client
+var Client *datastore.Client
 
 func init() {
 	ctx := context.Background()
@@ -16,17 +16,13 @@ func init() {
 	var err error
 
 	// set DATASTORE_PROJECT_ID env var
-	client, err = datastore.NewClient(ctx, "")
+	Client, err = datastore.NewClient(ctx, "")
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
-	if client == nil {
+	if Client == nil {
 		log.Fatalf("no client")
 	} else {
 		fmt.Println("client made")
 	}
-}
-
-func GetClient() *datastore.Client {
-	return client
 }

@@ -2,27 +2,29 @@ package crud
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"cloud.google.com/go/datastore"
 	"github.com/gin-gonic/gin"
 )
 
+type Patchable interface {
+	Patch(interface{})
+	New() Patchable
+}
+
 var ErrInvalidInput = errors.New("Invalid Input")
 
 // T is the full GET model
 // T2 is for the CREATE fields
 // T3 is for the UPDATE fields
-type CRUD[T any, T2 any, T3 any] struct {
-	DB *datastore.Client
+type CRUD[T Patchable, T2 any, T3 any] struct {
 	// datastore document kind
 	Kind string
 }
 
-func New[T any, T2 any, T3 any](kind string, dbClient *datastore.Client) *CRUD[T, T2, T3] {
+func New[T Patchable, T2 any, T3 any](kind string) *CRUD[T, T2, T3] {
 	return &CRUD[T, T2, T3]{
-		DB:   dbClient,
 		Kind: kind,
 	}
 }
@@ -50,8 +52,4 @@ func (crud *CRUD[T, T2, T3]) errToHTTPError(err error) int {
 	}
 
 	return http.StatusInternalServerError
-}
-
-func (crud *CRUD[T, T2, T3]) BeforeCreate() {
-	fmt.Println("default before create")
 }

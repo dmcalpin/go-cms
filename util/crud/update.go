@@ -2,7 +2,6 @@ package crud
 
 import (
 	"net/http"
-	"reflect"
 
 	"github.com/dmcalpin/go-cms/db"
 	"github.com/gin-gonic/gin"
@@ -15,8 +14,12 @@ func (crud *CRUD[T, T2, T3]) Update(c *gin.Context) {
 		return
 	}
 
-	entity := new(T)
-	err = crud.DB.Get(c, key, entity)
+	var entity T
+	// .New method isn't great, but it's not possible
+	// to do T{}, and the .Get below needs a pointer
+	// to a zero value struct
+	e := entity.New()
+	err = db.Client.Get(c, key, e)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
@@ -31,36 +34,21 @@ func (crud *CRUD[T, T2, T3]) Update(c *gin.Context) {
 		return
 	}
 
-	entity = crud.patchValues(entity, input)
+	e.Patch(input)
 
-	client := db.GetClient()
-	updatedKey, err := client.Put(c, key, entity)
+	client := db.Client
+	updatedKey, err := client.Put(c, key, e)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
 	}
 
-	updatedEntity := new(T)
-	err = crud.DB.Get(c, updatedKey, updatedEntity)
+	updatedEntity := entity.New()
+	err = db.Client.Get(c, updatedKey, updatedEntity)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, updatedEntity)
-}
-
-func (crud *CRUD[T, T2, T3]) patchValues(a *T, b *T3) *T {
-	aObj := reflect.ValueOf(a).Elem()
-	bObj := reflect.ValueOf(b).Elem()
-	bType := reflect.TypeOf(*b)
-	for _, field := range reflect.VisibleFields(bType) {
-		fieldName := field.Name
-		bFieldVal := bObj.FieldByName(fieldName)
-		if !bFieldVal.IsZero() {
-			aObj.FieldByName(fieldName).Set(reflect.ValueOf(bFieldVal.Interface()))
-		}
-
-	}
-	return a
 }
