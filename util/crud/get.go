@@ -10,31 +10,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (crud *CRUD[T, T2, T3]) Get(c *gin.Context) {
+func (crud *CRUD[T]) Get(c *gin.Context) {
+	var t T
+
 	key, err := crud.decodeKeyParam(&c.Params)
 	if err != nil {
 		crud.logAndWriteError(c, ErrInvalidInput)
 		return
 	}
 
-	var entity T
-	// .New method isn't great, but it's not possible
-	// to do T{}, and the .Get below needs a pointer
-	// to a zero value struct
-	e := entity.New()
-	err = db.Client.Get(c, key, e)
+	entity := t.New(key)
+	err = entity.Get(c)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, e)
+	c.JSON(http.StatusOK, entity)
 }
 
-func (crud *CRUD[T, T2, T3]) GetAll(c *gin.Context) {
+func (crud *CRUD[T]) GetAll(c *gin.Context) {
+	var t T
+	kind := t.New(nil).GetKind()
 	var entities []T
 
-	query := datastore.NewQuery(crud.Kind)
+	query := datastore.NewQuery(kind)
 
 	_, err := db.Client.GetAll(c, query, &entities)
 	if err != nil {
@@ -45,7 +45,7 @@ func (crud *CRUD[T, T2, T3]) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, entities)
 }
 
-func (crud *CRUD[T, T2, T3]) GetMulti(c *gin.Context) {
+func (crud *CRUD[T]) GetMulti(c *gin.Context) {
 	keyStrs, ok := c.Params.Get("keys")
 	if !ok {
 		crud.logAndWriteError(c, ErrInvalidInput)

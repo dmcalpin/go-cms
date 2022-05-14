@@ -3,23 +3,19 @@ package crud
 import (
 	"net/http"
 
-	"github.com/dmcalpin/go-cms/db"
 	"github.com/gin-gonic/gin"
 )
 
-func (crud *CRUD[T, T2, T3]) Update(c *gin.Context) {
+func (crud *CRUD[T]) Update(c *gin.Context) {
 	key, err := crud.decodeKeyParam(&c.Params)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
 	}
 
-	var entity T
-	// .New method isn't great, but it's not possible
-	// to do T{}, and the .Get below needs a pointer
-	// to a zero value struct
-	e := entity.New()
-	err = db.Client.Get(c, key, e)
+	var t T
+	entity := t.New(key)
+	err = entity.Get(c)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
@@ -27,28 +23,28 @@ func (crud *CRUD[T, T2, T3]) Update(c *gin.Context) {
 
 	// Update the entity
 	// Parse JSON
-	input := new(T3)
+	input := t.New(nil)
 	err = c.Bind(input)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
 	}
 
-	e.Patch(input)
+	entity.Patch(input)
 
-	client := db.Client
-	updatedKey, err := client.Put(c, key, e)
+	err = entity.Validate()
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
 	}
 
-	updatedEntity := entity.New()
-	err = db.Client.Get(c, updatedKey, updatedEntity)
+	entity.SetUpdatedAt()
+
+	err = entity.SaveAndGet(c)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedEntity)
+	c.JSON(http.StatusOK, entity)
 }

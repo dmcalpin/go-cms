@@ -1,0 +1,21 @@
+{{template "layout_standard.gohtml"}}
+
+{{define "Body"}}
+<thead>
+    <th>Key</th>
+    <th>Email</th>
+    <th>Password</th>
+    <th>Job</th>
+</thead>
+<tbody>
+    {{range .}}
+    <tr>
+        <td>{{.Key}}</td>
+        <td>{{.EmailAddress}}</td>
+        <td>{{.Password}}</td>
+        <td>{{.Job}}</td>
+    </tr>
+    {{end}}
+</tbody>
+</table>
+{{end}}

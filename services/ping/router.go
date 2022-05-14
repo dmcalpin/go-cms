@@ -5,8 +5,9 @@ import (
 )
 
 func AddRouter(r *gin.RouterGroup) {
-	rg := r.Group("/ping")
-
+	rg := r.Group("/api/ping")
 	rg.GET("/", getPing)
-	rg.GET("/html", getHtml)
+
+	htmlRg := r.Group("/ping")
+	htmlRg.GET("/", getHtml)
 }

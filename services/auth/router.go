@@ -7,7 +7,7 @@ import (
 func AddRouter(r *gin.RouterGroup) *gin.RouterGroup {
 	// Authorized group (uses gin.BasicAuth() middleware)
 	// Same than:
-	authorized := r.Group("/auth")
+	authorized := r.Group("/api/auth")
 	authorized.Use(gin.BasicAuth(gin.Accounts{
 		"foo":  "bar",
 		"manu": "123",

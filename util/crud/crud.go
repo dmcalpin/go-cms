@@ -5,41 +5,32 @@ import (
 	"net/http"
 
 	"cloud.google.com/go/datastore"
+	"github.com/dmcalpin/go-cms/db"
 	"github.com/gin-gonic/gin"
 )
-
-type Patchable interface {
-	Patch(interface{})
-	New() Patchable
-}
 
 var ErrInvalidInput = errors.New("Invalid Input")
 
 // T is the full GET model
 // T2 is for the CREATE fields
 // T3 is for the UPDATE fields
-type CRUD[T Patchable, T2 any, T3 any] struct {
-	// datastore document kind
-	Kind string
+type CRUD[T db.Patchable] struct{}
+
+func New[T db.Patchable]() *CRUD[T] {
+	return &CRUD[T]{}
 }
 
-func New[T Patchable, T2 any, T3 any](kind string) *CRUD[T, T2, T3] {
-	return &CRUD[T, T2, T3]{
-		Kind: kind,
-	}
-}
-
-func (crud *CRUD[T, T2, T3]) logAndWriteError(c *gin.Context, err error) {
+func (crud *CRUD[T]) logAndWriteError(c *gin.Context, err error) {
 	c.Error(err)
-	c.JSON(crud.errToHTTPError(err), nil)
+	c.JSON(crud.errToHTTPError(err), c.Errors.JSON())
 }
 
-func (crud *CRUD[T, T2, T3]) decodeKeyParam(params *gin.Params) (*datastore.Key, error) {
+func (crud *CRUD[T]) decodeKeyParam(params *gin.Params) (*datastore.Key, error) {
 	keyParam := params.ByName("key")
 	return datastore.DecodeKey(keyParam)
 }
 
-func (crud *CRUD[T, T2, T3]) errToHTTPError(err error) int {
+func (crud *CRUD[T]) errToHTTPError(err error) int {
 	switch {
 	case errors.Is(err, datastore.ErrNoSuchEntity):
 		return http.StatusNotFound

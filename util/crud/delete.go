@@ -3,18 +3,18 @@ package crud
 import (
 	"net/http"
 
-	"github.com/dmcalpin/go-cms/db"
 	"github.com/gin-gonic/gin"
 )
 
-func (crud *CRUD[T, T2, T3]) Delete(c *gin.Context) {
+func (crud *CRUD[T]) Delete(c *gin.Context) {
 	key, err := crud.decodeKeyParam(&c.Params)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
 	}
 
-	err = db.Client.Delete(c, key)
+	var t T
+	t.New(key).Delete(c)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
