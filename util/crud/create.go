@@ -6,8 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Create creates a new datastore model,
+// and then immediately GETs the model
+// ensuring the most recent data is returned.
 func (crud *CRUD[T]) Create(c *gin.Context) {
-	// _ = c.MustGet(gin.AuthUserKey).(string)
 	var t T
 	input := t.New(nil)
 

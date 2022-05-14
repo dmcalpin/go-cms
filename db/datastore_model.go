@@ -58,10 +58,10 @@ func (dm *DatastoreModel) Validate() error {
 	return nil
 }
 
-func (dm *DatastoreModel) SetUpdatedAt() {
-	dm.UpdatedAt = time.Now()
-}
-
 func (dm *DatastoreModel) SetCreatedAt() {
 	dm.CreatedAt = time.Now()
+}
+
+func (dm *DatastoreModel) SetUpdatedAt() {
+	dm.UpdatedAt = time.Now()
 }

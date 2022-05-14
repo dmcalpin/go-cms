@@ -1,7 +1,6 @@
 package crud
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -63,7 +62,6 @@ func (crud *CRUD[T]) GetMulti(c *gin.Context) {
 		keys = append(keys, key)
 	}
 
-	fmt.Println(keys)
 	entities := make([]T, len(keys))
 	err := db.Client.GetMulti(c, keys, entities)
 	if err != nil {
