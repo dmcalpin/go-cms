@@ -19,7 +19,7 @@ func (crud *CRUD[T]) Get(c *gin.Context) {
 	}
 
 	entity := t.New(key)
-	err = entity.Get(c)
+	err = db.Get(c, entity)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return

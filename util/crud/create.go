@@ -3,6 +3,7 @@ package crud
 import (
 	"net/http"
 
+	"github.com/dmcalpin/go-cms/db"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,7 +36,7 @@ func (crud *CRUD[T]) Create(c *gin.Context) {
 	input.SetCreatedAt()
 	input.SetUpdatedAt()
 
-	err = input.SaveAndGet(c)
+	err = db.SaveAndGet(c, input)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return

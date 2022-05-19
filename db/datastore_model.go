@@ -14,14 +14,11 @@ type Patchable interface {
 	New(*datastore.Key) Patchable
 	NewKey(interface{}, *datastore.Key) error
 	SetKey(*datastore.Key)
+	GetKey() *datastore.Key
 	GetKind() string
 	SetUpdatedAt()
 	SetCreatedAt()
 	Validate() error
-	Save(context.Context) error
-	SaveAndGet(context.Context) error
-	Get(context.Context) error
-	Delete(context.Context) error
 }
 
 type DatastoreModel struct {
@@ -50,6 +47,10 @@ func (dm *DatastoreModel) SetKey(key *datastore.Key) {
 	dm.Key = key
 }
 
+func (dm *DatastoreModel) GetKey() *datastore.Key {
+	return dm.Key
+}
+
 func (dm *DatastoreModel) GetKind() string {
 	return dm.Kind
 }
@@ -64,4 +65,32 @@ func (dm *DatastoreModel) SetCreatedAt() {
 
 func (dm *DatastoreModel) SetUpdatedAt() {
 	dm.UpdatedAt = time.Now()
+}
+
+func Get(c context.Context, p Patchable) error {
+	return Client.Get(c, p.GetKey(), p)
+}
+
+func Delete(c context.Context, p Patchable) error {
+	return Client.Delete(c, p.GetKey())
+}
+
+func Save(c context.Context, p Patchable) error {
+	updatedKey, err := Client.Put(c, p.GetKey(), p)
+	if err != nil {
+		return err
+	}
+
+	p.SetKey(updatedKey)
+
+	return nil
+}
+
+func SaveAndGet(c context.Context, p Patchable) error {
+	err := Save(c, p)
+	if err != nil {
+		return err
+	}
+
+	return Get(c, p)
 }

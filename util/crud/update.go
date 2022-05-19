@@ -3,6 +3,7 @@ package crud
 import (
 	"net/http"
 
+	"github.com/dmcalpin/go-cms/db"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,7 +16,7 @@ func (crud *CRUD[T]) Update(c *gin.Context) {
 
 	var t T
 	entity := t.New(key)
-	err = entity.Get(c)
+	err = db.Get(c, entity)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return
@@ -40,7 +41,7 @@ func (crud *CRUD[T]) Update(c *gin.Context) {
 
 	entity.SetUpdatedAt()
 
-	err = entity.SaveAndGet(c)
+	err = db.SaveAndGet(c, entity)
 	if err != nil {
 		crud.logAndWriteError(c, err)
 		return

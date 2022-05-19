@@ -1,10 +1,8 @@
 package users
 
 import (
-	"context"
 	"errors"
 	"net/http"
-	"strings"
 
 	"cloud.google.com/go/datastore"
 	"github.com/gin-gonic/gin"
@@ -12,71 +10,6 @@ import (
 	"github.com/dmcalpin/go-cms/db"
 	"github.com/dmcalpin/go-cms/util/crud"
 )
-
-const UserKind = "User"
-
-type User struct {
-	db.DatastoreModel
-	EmailAddress string         `datastore:"emailAddress" json:"emailAddress"`
-	Password     string         `datastore:"password" json:"-"`
-	Job          *datastore.Key `datastore:"job" json:"job"`
-}
-
-func (u *User) Patch(i interface{}) {
-	input := i.(*User)
-	if input.EmailAddress != "" {
-		u.EmailAddress = input.EmailAddress
-	}
-	if input.Password != "" {
-		u.Password = input.Password
-	}
-	if input.Job != nil {
-		u.Job = input.Job
-	}
-}
-
-func (u *User) Get(c context.Context) error {
-	return db.Client.Get(c, u.Key, u)
-}
-
-func (u *User) Save(c context.Context) error {
-	updatedKey, err := db.Client.Put(c, u.Key, u)
-	if err != nil {
-		return err
-	}
-
-	u.Key = updatedKey
-
-	return nil
-}
-
-func (u *User) SaveAndGet(c context.Context) error {
-	err := u.Save(c)
-	if err != nil {
-		return err
-	}
-
-	return u.Get(c)
-}
-
-func (u *User) Delete(c context.Context) error {
-	return db.Client.Delete(c, u.Key)
-}
-
-func (u *User) New(key *datastore.Key) db.Patchable {
-	user := &User{}
-	user.Kind = UserKind
-	user.Key = key
-
-	return user
-}
-
-func (u *User) Validate() error {
-	if !strings.Contains(u.EmailAddress, "@") {
-		return errors.New("bad email address, must contain '@'")
-	}
-	return nil
-}
 
 func AddRouter(r *gin.RouterGroup) {
 	userCrud := crud.New[*User]()
