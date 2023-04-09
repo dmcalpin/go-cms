@@ -1,0 +1,65 @@
+{{template "layout_standard.gohtml" .}}
+
+{{define "body"}}
+<h1>Create User</h1>
+<form action="#" method="post" id="user-create-form">
+    <div class="form-field">
+        <label for="emailAddress">Email</label>
+        <input type="email" name="emailAddress" id="emailAddress">
+    </div>
+
+    <div class="form-field">
+        <label>Password</label>
+        <input type="password" name="password" id="password">
+    </div>
+
+    <div class="form-field">
+        <label>Job</label>
+        <select name="job" id="job">
+            <option value="">Select A Job</option>
+        </select>
+    </div>
+
+    <div class="form-field">
+        <button type="submit">Create</button>
+    </div>
+</form>
+{{end}}
+
+{{define "scripts"}}
+<script>
+    (async function () {
+        let resp = await fetch("/api/jobs")
+        if (resp.ok) {
+            let jobs = await resp.json()
+            if (jobs) {
+                let options = ''
+                jobs.forEach(job => {
+                    options += `<option value="${job.key}">${job.title}</option>`
+                })
+                document.querySelector("#job").innerHTML += options
+            }
+        }
+
+        let form = document.querySelector("#user-create-form")
+        form.addEventListener('submit', async (evt) => {
+            evt.preventDefault()
+
+            let resp = await fetch("/api/users", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "emailAddress": form.emailAddress.value,
+                    "password": form.emailAddress.password
+                })
+            })
+            if (resp.ok) {
+                window.location = "/users"
+            }
+        })
+    })()
+</script>
+{{end}}

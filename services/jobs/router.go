@@ -16,4 +16,8 @@ func AddRouter(r *gin.RouterGroup) {
 	rg.GET("/multi/:keys", jobCrud.GetMulti)
 	rg.GET("/:key", jobCrud.Get)
 	rg.GET("/", jobCrud.GetAll)
+
+	htmlRg := r.Group("/jobs")
+	htmlRg.GET("/:key", jobCrud.GetOneHTML)
+	htmlRg.GET("/", jobCrud.GetAllHTML)
 }

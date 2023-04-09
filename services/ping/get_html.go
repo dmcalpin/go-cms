@@ -1,8 +1,7 @@
 package ping
 
 import (
-	"net/http"
-
+	"github.com/dmcalpin/go-cms/services/shared/templates"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,5 +11,11 @@ func getHtml(c *gin.Context) {
 		"Name": "dave",
 	}
 
-	c.HTML(http.StatusOK, "ping.gohtml", data)
+	template := templates.GetTemplateWithLayout("services/ping/templates/ping.gohtml")
+
+	err := template.Execute(c.Writer, data)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 }

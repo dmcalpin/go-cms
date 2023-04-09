@@ -1,0 +1,31 @@
+{{define "layout_standard.gohtml"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{{block "title" .}}{{end}}</title>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/index.css">
+
+    {{block "head" .}}{{end}}
+</head>
+
+<body>
+    <header>
+        <b>Dave's site</b>
+        {{block "header" .}}{{end}}
+    </header>
+    <main>
+        {{block "body" .}}{{end}}
+    </main>
+    <footer>
+        {{block "footer" .}}{{end}}
+        &copy; Dave 2022
+
+        {{block "scripts" .}}{{end}}
+    </footer>
+</body>
+
+</html>
+{{end}}

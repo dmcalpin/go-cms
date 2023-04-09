@@ -1,0 +1,22 @@
+{{template "layout_standard.gohtml" .}}
+
+{{define "body"}}
+<h1>Job Details</h1>
+
+<table>
+    <thead>
+        <th>Key</th>
+        <th>Title</th>
+        <th>Description</th>
+    </thead>
+    <tbody>
+        {{range .}}
+        <tr>
+            <td><a href="/jobs/{{EncodeKey .Key}}">{{EncodeKey .Key}}</a></td>
+            <td>{{.Title}}</td>
+            <td>{{.Description}}</td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{end}}

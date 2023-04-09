@@ -1,9 +1,7 @@
 package main
 
 import (
-	"html/template"
-	"log"
-
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 
 	"github.com/dmcalpin/go-cms/services/jobs"
@@ -16,14 +14,7 @@ func main() {
 	// gin.DisableConsoleColor()
 	r := gin.Default()
 
-	tmpl, err := template.ParseFiles("services/templates/404.gohtml", "services/templates/layout_standard.gohtml")
-	if err != nil {
-		log.Fatal(err)
-	}
-	r.SetHTMLTemplate(tmpl)
-
-	ping.SetTemplates(r)
-	users.SetTemplates(r)
+	r.Use(static.Serve("/", static.LocalFile("./static", false)))
 
 	rg := r.Group("/")
 	ping.AddRouter(rg)

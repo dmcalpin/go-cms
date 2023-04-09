@@ -2,14 +2,24 @@ package users
 
 import (
 	"errors"
+	"html/template"
 	"strings"
 
 	"cloud.google.com/go/datastore"
 
 	"github.com/dmcalpin/go-cms/db"
+	"github.com/dmcalpin/go-cms/services/shared/templates"
 )
 
 const UserKind = "User"
+
+var createTemplate, multiTemplate, oneTemplate *template.Template
+
+func init() {
+	createTemplate = templates.GetTemplateWithLayout("services/users/templates/users_create.gohtml")
+	multiTemplate = templates.GetTemplateWithLayout("services/users/templates/users_list.gohtml")
+	oneTemplate = templates.GetTemplateWithLayout("services/users/templates/users_details.gohtml")
+}
 
 type User struct {
 	db.DatastoreModel
@@ -44,4 +54,18 @@ func (u *User) Validate() error {
 		return errors.New("bad email address, must contain '@'")
 	}
 	return nil
+}
+
+// Template config
+func (u *User) CreateTemplate() *template.Template {
+	return createTemplate
+}
+func (u *User) UpdateTemplate() *template.Template {
+	return nil
+}
+func (u *User) GetMultiTemplate() *template.Template {
+	return multiTemplate
+}
+func (u *User) GetOneTemplate() *template.Template {
+	return oneTemplate
 }

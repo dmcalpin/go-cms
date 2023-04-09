@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"errors"
+	"html/template"
 	"reflect"
 	"time"
 
@@ -19,6 +20,10 @@ type Patchable interface {
 	SetUpdatedAt()
 	SetCreatedAt()
 	Validate() error
+	CreateTemplate() *template.Template
+	UpdateTemplate() *template.Template
+	GetMultiTemplate() *template.Template
+	GetOneTemplate() *template.Template
 }
 
 type DatastoreModel struct {

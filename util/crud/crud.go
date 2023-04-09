@@ -2,10 +2,12 @@ package crud
 
 import (
 	"errors"
+	"html/template"
 	"net/http"
 
 	"cloud.google.com/go/datastore"
 	"github.com/dmcalpin/go-cms/db"
+	"github.com/dmcalpin/go-cms/services/shared/templates"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,6 +25,20 @@ func New[T db.Patchable]() *CRUD[T] {
 func (crud *CRUD[T]) logAndWriteError(c *gin.Context, err error) {
 	c.Error(err)
 	c.JSON(crud.errToHTTPError(err), c.Errors.JSON())
+}
+
+func (crud *CRUD[T]) logAndRenderError(c *gin.Context, err error) {
+	c.Error(err)
+	t := template.New("error.gohtml")
+	templates.AddFuncs(t)
+	t, parseErr := template.ParseFiles("services/shared/templates/layout_standard.gohtml", "services/shared/templates/error.gohtml")
+	if parseErr != nil {
+		panic(parseErr)
+	}
+	t.Execute(c.Writer, map[string]interface{}{
+		"Status":  crud.errToHTTPError(err),
+		"Message": err.Error(),
+	})
 }
 
 func (crud *CRUD[T]) decodeKeyParam(params *gin.Params) (*datastore.Key, error) {

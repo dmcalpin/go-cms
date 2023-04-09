@@ -1,0 +1,13 @@
+{{template "layout_standard.gohtml" .}}
+
+{{define "body"}}
+<h1>Job Details</h1>
+<dl>
+    <dt>Key</dt>
+    <dd>{{EncodeKey .Key}}</dd>
+    <dt>Title</dt>
+    <dd>{{.Title}}</dd>
+    <dt>Description</dt>
+    <dd>{{.Description}}</dd>
+</dl>
+{{end}}

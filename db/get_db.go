@@ -13,7 +13,7 @@ var Client *datastore.Client
 func init() {
 	ctx := context.Background()
 
-	var err error
+	// var err error
 
 	// set DATASTORE_PROJECT_ID env var
 	Client, err = datastore.NewClient(ctx, "")

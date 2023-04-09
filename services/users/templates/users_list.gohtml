@@ -1,21 +1,45 @@
-{{template "layout_standard.gohtml"}}
+{{template "layout_standard.gohtml" .}}
 
-{{define "Body"}}
-<thead>
-    <th>Key</th>
-    <th>Email</th>
-    <th>Password</th>
-    <th>Job</th>
-</thead>
-<tbody>
-    {{range .}}
-    <tr>
-        <td>{{.Key}}</td>
-        <td>{{.EmailAddress}}</td>
-        <td>{{.Password}}</td>
-        <td>{{.Job}}</td>
-    </tr>
-    {{end}}
-</tbody>
+{{define "body"}}
+<h1>User List</h1>
+<a href="/users/new">New User</a>
+<table cellspacing="0" cellpadding="0">
+    <thead>
+        <th>Key</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Job</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+        {{range .}}
+        <tr>
+            <td><a href="/users/{{EncodeKey .Key}}">{{EncodeKey .Key}}</a></td>
+            <td>{{.EmailAddress}}</td>
+            <td>{{.Password}}</td>
+            <td><a href="/jobs/{{EncodeKey .Job}}">{{EncodeKey .Job}}</a></td>
+            <td><button class="delete-user" data-id="{{EncodeKey .Key}}">X</button></td>
+        </tr>
+        {{end}}
+    </tbody>
 </table>
+{{end}}
+
+{{define "scripts"}}
+<script>
+    (function () {
+        async function doDelete(evt) {
+            await fetch("/api/users/" + evt.currentTarget.dataset.id, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            window.location.reload()
+        }
+        document.querySelectorAll(".delete-user").forEach((elem) => {
+            elem.addEventListener('click', doDelete)
+        })
+    })()
+</script>
 {{end}}

@@ -1,12 +1,22 @@
 package jobs
 
 import (
+	"html/template"
+
 	"cloud.google.com/go/datastore"
 
 	"github.com/dmcalpin/go-cms/db"
+	"github.com/dmcalpin/go-cms/services/shared/templates"
 )
 
 const JobKind = "Job"
+
+var multiTemplate, oneTemplate *template.Template
+
+func init() {
+	multiTemplate = templates.GetTemplateWithLayout("services/jobs/templates/jobs_list.gohtml")
+	oneTemplate = templates.GetTemplateWithLayout("services/jobs/templates/jobs_details.gohtml")
+}
 
 type Job struct {
 	db.DatastoreModel
@@ -30,4 +40,18 @@ func (u *Job) Patch(i interface{}) {
 	if input.Description != "" {
 		u.Description = input.Description
 	}
+}
+
+// Template config
+func (u *Job) CreateTemplate() *template.Template {
+	return nil
+}
+func (u *Job) UpdateTemplate() *template.Template {
+	return nil
+}
+func (u *Job) GetMultiTemplate() *template.Template {
+	return multiTemplate
+}
+func (u *Job) GetOneTemplate() *template.Template {
+	return oneTemplate
 }
